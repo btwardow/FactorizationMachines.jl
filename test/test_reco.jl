@@ -1,9 +1,7 @@
 module SimpleRecoTest
 
-
 using FactorizationMachines
 using Base.Test
-
 
 # simple recommendation example
 
@@ -32,7 +30,7 @@ T = [
 
 info("Testing reading from libsvm format...")
 
-(XFromFile, yFromFile) = fmReadLibSVM("test/data/small_train.libfm")
+(XFromFile, yFromFile) = fmReadLibSVM("data/small_train.libfm")
 
 println(XFromFile)
 println(size(XFromFile))
@@ -43,10 +41,9 @@ y = T[:,1]
 
 fm = fmTrain(sparse(XFromFile),yFromFile)
 
-(TFromFile, tFromFile) = fmReadLibSVM("test/data/small_test.libfm")
+(TFromFile, tFromFile) = fmReadLibSVM("data/small_test.libfm")
 p = fmPredict(fm,sparse(TFromFile))
 
 info("Predictions: $p")
 
 end
-
