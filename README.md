@@ -1,6 +1,6 @@
 # FactorizationMachines.jl
 
-[![Build Status](https://travis-ci.org/btwardow/FactorizationMachines.jl.svg?branch=master)](https://travis-ci.org/btwardow/FactorizationMachines.jl)
+[![Build Status](https://travis-ci.org/btwardow/FactorizationMachines.jl.svg?branch=master)](https://travis-ci.org/btwardow/FactorizationMachines.jl)[![Coverage Status](https://coveralls.io/repos/btwardow/FactorizationMachines.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/btwardow/FactorizationMachines.jl?branch=master)
 
 Implementation of Factorization Machines for Julia. 
 
