@@ -1,0 +1,5 @@
+#!/bin/bash
+
+LIBFM_HOME="/Users/bartlomiej.twardowsk/Development/github/libfm"
+
+$LIBFM_HOME/bin/libfm -task r -method sgd -train ml-1m.libfm -iter 100 -dim ‘1,1,4’ -learn_rate 0.01
