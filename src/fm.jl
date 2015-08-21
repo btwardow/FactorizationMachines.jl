@@ -1,34 +1,3 @@
-#function fmPredictInstance(fm::FMModel, x::FMVector)
-#   result = 0.0
-#   fSum = zeros(fm.num_factor)
-#   sum_sqr = zeros(fm.num_factor)
-#   if(fm.k0)
-#       result += fm.w0
-#   end
-#   if(fm.k1)
-#       for i in 1:length(x)
-#            if x[i] != 0.0
-#                result += fm.w[i] * x[i] 
-#            end
-#       end
-#   end
-#   for f in 1:fm.num_factor
-#       for i in 1:length(x)
-#            if x[i] != 0.0
-#               d = fm.V[f,i] * x[i]
-#               fSum[f] += d
-#               sum_sqr[f] += d*d
-#            end
-#       end
-#       result += 0.5 * (fSum[f]*fSum[f] - sum_sqr[f])
-#   end
-#    #scale prediction
-#    result = min(result, fm.targetMax)
-#    result = max(result, fm.targetMin)
-#   (result, fSum, sum_sqr)
-#end
-
-
 function fmPredictInstance!(fm::FMModel, idx::Array{Int64,1}, x::Array{FMFloat,1}, fSum::Array{FMFloat}, sum_sqr::Array{FMFloat})
    fill!(fSum, .0)
    fill!(sum_sqr, .0)
@@ -141,9 +110,11 @@ function fmTrain(
     if method == :sgd
         fmTrainSGD!(fm, X, y, iterationNum, alpha)
     else
-        error("FM Model learning method: $method not implemented!")
-        error("If You think it should be, create appropriate Pull Request")
-        error("or contact me - bartlomiej.twardowski@gmail.com")
+        error("""
+        FM Model learning method: $method not implemented!
+        If You think it should be, create appropriate Pull Request
+        or contact me - bartlomiej.twardowski@gmail.com
+        """)
     end
     
     fm
