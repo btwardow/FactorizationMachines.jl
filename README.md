@@ -1,18 +1,65 @@
 # FactorizationMachines.jl
 
-[![Build Status](https://travis-ci.org/btwardow/FactorizationMachines.jl.svg?branch=master)](https://travis-ci.org/btwardow/FactorizationMachines.jl)[![Coverage Status](https://coveralls.io/repos/btwardow/FactorizationMachines.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/btwardow/FactorizationMachines.jl?branch=master)
+[![Build Status](https://travis-ci.org/btwardow/FactorizationMachines.jl.svg?branch=master)](https://travis-ci.org/btwardow/FactorizationMachines.jl)[![Coverage
+Status](https://coveralls.io/repos/btwardow/FactorizationMachines.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/btwardow/FactorizationMachines.jl?
+branch=master)
 
-Implementation of Factorization Machines for Julia. 
+## Implementation of Factorization Machines for Julia.
 
-Types of Implemented FM:
- - Standard (libfm.org) with SGD and only for regression
- - (TODO) Field-Aware (http://www.csie.ntu.edu.tw/~r01922136/libffm)
- - (TODO) Gaussian Process (http://www.ci.tuwien.ac.at/~alexis/Publications_files/gpfm-sigir14-draft.pdf)
+As author describes:
+
+> FMs combine the high-prediction accuracy of factorization models with the flexibility of feature engineering.
+> The input data for FMs is described with real-valued features, exactly like in other machine-learning
+> approaches such as linear regression, support vector machines, etc.
+> However, the internal model of FMs uses factorized interactions between variables,
+> and thus, it shares with other factorization models the high prediction quality in sparse settings,
+> like in recommender systems. It has been shown that FMs can mimic most factorization
+> models just by feature engineering [Rendle 2010]
+
+Steffen Rendle (2012): Factorization Machines with libFM, in ACM Trans. Intell. Syst. Technol., 3(3), May. [PDF]
+
+Implementation is mostly based on [libfm software](libfm.org) and try to be compatible with conventions used there.
+
+## Usage
+
+### Simple recommendation example
+
+```julia
+using FactorizationMachines
+
+T = [
+5           1 0     1 0 0 0    1 0 0        12.5;
+5           1 0     0 1 0 0    1 0 0        20;
+4           1 0     0 0 1 0    1 0 0        78;
+1           0 1     1 0 0 0    0 0 1        12.5;
+1           0 1     0 1 0 0    0 0 1        20;
+]
+
+X = sparse(T[:,2:end])'
+y = T[:,1]
+
+fm = fmTrain(X, y)
+
+newX = sparse([
+0 1     0 1 0 0    0 0 1        13.0;
+])'
+
+p = fmPredict(fm, newX)
+```
+### Using LIBSVM file format
+
+```julia
+(XFromFile, yFromFile) = fmReadLibSVM("data/small_train.libfm")
+fm = fmTrain(sparse(XFromFile),yFromFile)
+(TFromFile, tFromFile) = fmReadLibSVM("data/small_test.libfm")
+p = fmPredict(fm,sparse(TFromFile))
+```
 
 
-# TODOs:
- - performance changes for Julia
- - classifiation 
- - adaptive SGD
- - suffle training set
- - performance benchmark
+## TODOs:
+-   Add classifiation. Right now only regression task is handled
+-   Adaptive SGD
+-   Performance benchmark with libfm and python implementation (pyfm)
+-   MCMC and ALS - just like in libfm
+-   Field-Aware (http://www.csie.ntu.edu.tw/~r01922136/libffm)
+-   Gaussian Process (http://www.ci.tuwien.ac.at/~alexis/Publications_files/gpfm-sigir14-draft.pdf)
