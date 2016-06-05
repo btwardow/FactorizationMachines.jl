@@ -2,7 +2,7 @@ module FactorizationMachines
 
 export  fmTrain, fmPredict, fmPredict!,
         fmReadLibSVM,
-        fmEvaluate!, fmEvaluate
+        fmEvaluateRMSE!, fmEvaluateRMSE
 
 typealias FMFloat Float64
 typealias FMInt Int64
@@ -10,6 +10,8 @@ typealias FMMatrix SparseMatrixCSC{Float64,Int64}
 typealias FMVector SparseMatrixCSC{Float64,Int64}
 
 abstract FMPredictor
+
+include("fm.jl")
 
 include("fm_regressor.jl")
 
