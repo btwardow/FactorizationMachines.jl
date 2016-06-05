@@ -57,7 +57,7 @@ function fmSGDIteration!{P<:FMPredictor}(fm::P, X::FMMatrix, y::Array{FMFloat}, 
        fmSGDUpdate!(fm, alpha, idx, x, mult, fSum)
    end
    #evaluation
-   @time rmse = fmEvaluate!(fm, X, y, predictions)
+   @time rmse = fmEvaluateRMSE!(fm, X, y, predictions)
    info("[GD - Iteration $iteration] RMSE: $rmse")
 end
 
