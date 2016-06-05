@@ -1,4 +1,28 @@
-function fmPredictInstance!(fm::FMModel, idx::Array{Int64,1}, x::Array{FMFloat,1}, fSum::Array{FMFloat}, sum_sqr::Array{FMFloat})
+type FMRegressor <: FMPredictor
+    k0::Bool
+    k1::Bool
+
+    # model parameters
+    w0::FMFloat
+    w::Array{Float64,1}
+    V::Array{Float64,2}
+
+    # regularization
+    reg0::FMFloat
+    regw::FMFloat
+    regv::Array{FMFloat}
+
+    initMean::FMFloat
+    initStdev::FMFloat
+
+    num_attribute::FMInt
+    num_factor::FMInt
+
+    targetMin::FMFloat
+    targetMax::FMFloat
+end
+
+function fmPredictInstance!(fm::FMRegressor, idx::Array{Int64,1}, x::Array{FMFloat,1}, fSum::Array{FMFloat}, sum_sqr::Array{FMFloat})
    fill!(fSum, .0)
    fill!(sum_sqr, .0)
    result = .0
@@ -7,7 +31,7 @@ function fmPredictInstance!(fm::FMModel, idx::Array{Int64,1}, x::Array{FMFloat,1
    end
    if(fm.k1)
        for i in 1:length(idx)
-            result += fm.w[idx[i]] * x[i] 
+            result += fm.w[idx[i]] * x[i]
        end
    end
    for f in 1:fm.num_factor
@@ -23,13 +47,13 @@ function fmPredictInstance!(fm::FMModel, idx::Array{Int64,1}, x::Array{FMFloat,1
     result = max(result, fm.targetMin)
 end
 
-function fmPredict(fm::FMModel, X::FMMatrix)
+function fmPredict(fm::FMRegressor, X::FMMatrix)
     result = fill(.0, X.n)
     fmPredict!(fm,X,result)
     result
 end
 
-function fmPredict!(fm::FMModel, X::FMMatrix, result::Array{FMFloat})
+function fmPredict!(fm::FMRegressor, X::FMMatrix, result::Array{FMFloat})
     n = size(X, 2)
     fill!(result, .0)
    fSum = fill(.0, fm.num_factor)
@@ -41,21 +65,25 @@ function fmPredict!(fm::FMModel, X::FMMatrix, result::Array{FMFloat})
     end
 end
 
-function fmEvaluateRMSE!(fm::FMModel, X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
+fmLoss(::Type{FMRegressor}, yhat::FMFloat, y::FMFloat) = (yhat - y)^2
+fmLossGradient(::Type{FMRegressor}, yhat::FMFloat, y::FMFloat) = yhat - y
+
+function fmEvaluate!(fm::FMRegressor, X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
     @time fmPredict!(fm, X, predictions)
-    err = predictions - y 
+    err = predictions - y
     sqrt(mean(err.*err))
 end
 
-function fmEvaluateRMSE(fm::FMModel, X::FMMatrix, y::Array{FMFloat})
+function fmEvaluate(fm::FMRegressor, X::FMMatrix, y::Array{FMFloat})
     info("Evaluation - fmPredict...")
     p = @time fmPredict(fm, X)
     info("Evaluation - fmPredict ended.")
-    err = p - y 
+    err = p - y
     sqrt(sum(err.*err)/length(err))
 end
 
 function fmInitModel(
+    ::Type{FMRegressor},
     X::FMMatrix,
     y::Array{FMFloat},
     iterationNum,
@@ -92,30 +120,5 @@ function fmInitModel(
     V = randn(num_factor, attributesNumber) .* initStd
 
     #new model
-    FMModel(k0, k1, w0, w1, V, reg0, regw, regv, initMean, initStd, attributesNumber, num_factor, targetMin, targetMax )
-end
-
-function fmTrain(
-    X::FMMatrix,
-    y::Array{FMFloat},
-    method::Symbol = :sgd,
-    iterationNum = 100,
-    dim = (1,1,8),
-    regularization = ( .0, .0, .0),
-    alpha = 0.01
-    )
-
-    fm = @time fmInitModel(X,y,iterationNum,dim,regularization,alpha)
-
-    if method == :sgd
-        fmTrainSGD!(fm, X, y, iterationNum, alpha)
-    else
-        error("""
-        FM Model learning method: $method not implemented!
-        If You think it should be, create appropriate Pull Request
-        or contact me - bartlomiej.twardowski@gmail.com
-        """)
-    end
-    
-    fm
+    FMRegressor(k0, k1, w0, w1, V, reg0, regw, regv, initMean, initStd, attributesNumber, num_factor, targetMin, targetMax )
 end
