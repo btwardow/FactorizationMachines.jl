@@ -1,3 +1,33 @@
+function fmTrain(
+    X::FMMatrix,
+    y::Array{FMFloat},
+    method::Symbol = :sgd,
+    task::Symbol = :regression,
+    iterationNum = 100,
+    dim = (1,1,8),
+    regularization = ( .0, .0, .0),
+    alpha = 0.01
+    )
+
+    if task == :classification
+      fm = @time fmInitModel(FMClassifier,X,y,iterationNum,dim,regularization,alpha)
+    else
+      fm = @time fmInitModel(FMRegressor,X,y,iterationNum,dim, regularization,alpha)
+    end
+
+    if method == :sgd
+        fmTrainSGD!(fm, X, y, iterationNum, alpha)
+    else
+        error("""
+        FM Model learning method: $method not implemented!
+        If You think it should be, create appropriate Pull Request
+        or contact me - bartlomiej.twardowski@gmail.com
+        """)
+    end
+
+    fm
+end
+
 function fmPredict(fm::FMPredictor, X::FMMatrix)
     result = fill(.0, X.n)
     fmPredict!(fm,X,result)
