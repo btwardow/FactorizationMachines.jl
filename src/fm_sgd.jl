@@ -1,15 +1,19 @@
-function fmTrain{P<:FMPredictor}(
-    ::Type{P},
+function fmTrain(
     X::FMMatrix,
     y::Array{FMFloat},
     method::Symbol = :sgd,
+    task::Symbol = :regression,
     iterationNum = 100,
     dim = (1,1,8),
     regularization = ( .0, .0, .0),
     alpha = 0.01
     )
 
-    fm = @time fmInitModel(P,X,y,iterationNum,dim,regularization,alpha)
+    if task == :classification
+      fm = @time fmInitModel(FMClassifier,X,y,iterationNum,dim,regularization,alpha)
+    else
+      fm = @time fmInitModel(FMRegressor,X,y,iterationNum,dim, regularization,alpha)
+    end
 
     if method == :sgd
         fmTrainSGD!(fm, X, y, iterationNum, alpha)

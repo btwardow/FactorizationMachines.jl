@@ -1,7 +1,6 @@
 module FactorizationMachines
 
-export  FMRegressor, FMClassifier,
-        fmTrain, fmPredict, fmPredict!,
+export  fmTrain, fmPredict, fmPredict!,
         fmReadLibSVM,
         fmEvaluate!, fmEvaluate
 
