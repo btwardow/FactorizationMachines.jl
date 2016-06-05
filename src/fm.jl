@@ -46,14 +46,6 @@ function fmPredict!(fm::FMPredictor, X::FMMatrix, result::Array{FMFloat})
     end
 end
 
-function fmEvaluateRMSE(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat})
-    info("Evaluation - fmPredict...")
-    p = @time fmPredict(fm, X)
-    info("Evaluation - fmPredict ended.")
-    err = fmLoss(p, y)
-    sqrt(sum(err.*err)/length(err))
-end
-
 function fmEvaluateRMSE!(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
     @time fmPredict!(fm, X, predictions)
     err = fmLoss(typeof(fm), predictions, y)
