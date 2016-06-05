@@ -43,7 +43,7 @@ function fmPredictInstance!(fm::FMClassifier, idx::Array{Int64,1}, x::Array{FMFl
     1.0 / (1.0 + exp(-result))
 end
 
-fmLoss(::Type{FMClassifier}, yhat::FMFloat, y::FMFloat) = 1 - sign(yhat * y)
+fmLoss(::Type{FMClassifier}, yhat::FMFloat, y::FMFloat) = (1 - sign(yhat * y)) / 2
 fmLossGradient(::Type{FMClassifier}, yhat::FMFloat, y::FMFloat) = -y * (1.0 - 1.0 / (1.0 + exp(-y * yhat)))
 
 function fmInitModel(
