@@ -1,6 +1,32 @@
-function fmTrainSGD!(fm::FMModel, X::FMMatrix, y::Array{FMFloat}, iterationNum::FMInt, alpha::FMFloat) 
+function fmTrain{P<:FMPredictor}(
+    ::Type{P},
+    X::FMMatrix,
+    y::Array{FMFloat},
+    method::Symbol = :sgd,
+    iterationNum = 100,
+    dim = (1,1,8),
+    regularization = ( .0, .0, .0),
+    alpha = 0.01
+    )
+
+    fm = @time fmInitModel(P,X,y,iterationNum,dim,regularization,alpha)
+
+    if method == :sgd
+        fmTrainSGD!(fm, X, y, iterationNum, alpha)
+    else
+        error("""
+        FM Model learning method: $method not implemented!
+        If You think it should be, create appropriate Pull Request
+        or contact me - bartlomiej.twardowski@gmail.com
+        """)
+    end
+
+    fm
+end
+
+function fmTrainSGD!(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat}, iterationNum::FMInt, alpha::FMFloat)
    info("Learning Factorization Machines with gradient descent...")
-   
+
    for iteration in 1:iterationNum
         #info("[GD - Iteration $iteration] Start...")
         @time fmSGDIteration!(fm, X, y, iteration, alpha)
@@ -8,7 +34,7 @@ function fmTrainSGD!(fm::FMModel, X::FMMatrix, y::Array{FMFloat}, iterationNum::
    end
 end
 
-function fmSGDIteration!(fm::FMModel, X::FMMatrix, y::Array{FMFloat}, iteration::FMInt, alpha::FMFloat) 
+function fmSGDIteration!{P<:FMPredictor}(fm::P, X::FMMatrix, y::Array{FMFloat}, iteration::FMInt, alpha::FMFloat)
 
    predictions = fill(.0, length(y))
    p = .0
@@ -20,18 +46,18 @@ function fmSGDIteration!(fm::FMModel, X::FMMatrix, y::Array{FMFloat}, iteration:
         idx = X.rowval[X.colptr[c] : (X.colptr[c+1]-1)]
         x = X.nzval[X.colptr[c] : (X.colptr[c+1]-1)]
         #info("DEBUG: processing $c")
-        p = fmPredictInstance!(fm, idx, x, fSum, sum_sqr)    
+        p = fmPredictInstance!(fm, idx, x, fSum, sum_sqr)
         #info("DEBUG: prediction - p: $p, fSum: $fSum, sum_sqr: $sum_sqr")
-        mult = - (y[c] - p)
+        mult = fmLossGradient(P, p, y[c])
         #info("DEBUG: mult: $mult")
        fmSGDUpdate!(fm, alpha, idx, x, mult, fSum)
    end
    #evaluation
-   @time rmse = fmEvaluateRMSE!(fm, X, y, predictions)
+   @time rmse = fmEvaluate!(fm, X, y, predictions)
    info("[GD - Iteration $iteration] RMSE: $rmse")
 end
 
-function fmSGDUpdate!(fm::FMModel, alpha::FMFloat, idx::Array{Int64}, x::Array{FMFloat}, multiplier::FMFloat, fSum::Array{FMFloat})
+function fmSGDUpdate!(fm::FMPredictor, alpha::FMFloat, idx::Array{Int64}, x::Array{FMFloat}, multiplier::FMFloat, fSum::Array{FMFloat})
     if fm.k0
         fm.w0 -= alpha * (multiplier + fm.reg0 * fm.w0)
     end
@@ -47,4 +73,3 @@ function fmSGDUpdate!(fm::FMModel, alpha::FMFloat, idx::Array{Int64}, x::Array{F
         end
     end
 end
-
