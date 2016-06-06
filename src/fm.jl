@@ -1,6 +1,6 @@
 function fmTrain(
     X::FMMatrix,
-    y::Array{FMFloat},
+    y::Array{FMFloat};
     method::Symbol = :sgd,
     task::Symbol = :regression,
     iterationNum = 100,
@@ -44,6 +44,11 @@ function fmPredict!(fm::FMPredictor, X::FMMatrix, result::Array{FMFloat})
         x = X.nzval[X.colptr[c] : (X.colptr[c+1]-1)]
         result[c] = fmPredictInstance!(fm, idx, x, fSum, sum_sqr)
     end
+end
+
+function fmEvaluateRMSE(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat})
+    predictions = zeros(X.n)
+    fmEvaluateRMSE!(fm, X, y, predictions)
 end
 
 function fmEvaluateRMSE!(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
