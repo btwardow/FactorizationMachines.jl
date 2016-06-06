@@ -8,7 +8,7 @@ function fmTrainSGD!(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat}, iterationN
    end
 end
 
-function fmSGDIteration!{P<:FMPredictor}(fm::P, X::FMMatrix, y::Array{FMFloat}, iteration::FMInt, alpha::FMFloat)
+function fmSGDIteration!(fm::FMPredictor, X::FMMatrix, y::Array{FMFloat}, iteration::FMInt, alpha::FMFloat)
 
    predictions = fill(.0, length(y))
    p = .0
@@ -22,7 +22,7 @@ function fmSGDIteration!{P<:FMPredictor}(fm::P, X::FMMatrix, y::Array{FMFloat}, 
         #info("DEBUG: processing $c")
         p = fmPredictInstance!(fm, idx, x, fSum, sum_sqr)
         #info("DEBUG: prediction - p: $p, fSum: $fSum, sum_sqr: $sum_sqr")
-        mult = fmLossGradient(P, p, y[c])
+        mult = fmLossGradient(typeof(fm), p, y[c])
         #info("DEBUG: mult: $mult")
        fmSGDUpdate!(fm, alpha, idx, x, mult, fSum)
    end
