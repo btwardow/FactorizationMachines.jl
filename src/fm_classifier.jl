@@ -63,15 +63,11 @@ function fmInitModel(
     initMean = .0
     reg0, regw, regVAll = regularization
     regv = fill(regVAll, dim[3])
-    targetMin = minimum(y)
-    targetMax = maximum(y)
 
     #sanity check
     assert( length(y) == samplesNumber )
 
     info("Training dataset size: $samplesNumber")
-    info("Target min: $targetMin")
-    info("Target max: $targetMax")
     info("Iteration number: $iterationNum")
     info("Alpha: $alpha")
 
@@ -84,5 +80,5 @@ function fmInitModel(
     V = randn(num_factor, attributesNumber) .* initStd
 
     #new model
-    FMClassifier(k0, k1, w0, w1, V, reg0, regw, regv, initMean, initStd, attributesNumber, num_factor, targetMin, targetMax )
+    FMClassifier(k0, k1, w0, w1, V, reg0, regw, regv, initMean, initStd, attributesNumber, num_factor)
 end
