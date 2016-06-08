@@ -4,8 +4,7 @@ export sqerr,
        nlogsig,
        nlogsig_deriv,
        heaviside,
-       sigmoid,
-       sigmoid_deriv
+       sigmoid
 
 """Squared error"""
 sqerr(p::Number, y::Number)       = (p - y)^2
@@ -20,9 +19,5 @@ heaviside(p::Number, y::Number) = p == y ? 0 : 1
 
 """Sigmoid"""
 sigmoid(x::Number) = 1 / (1 + exp(-x))
-function sigmoid_deriv(x::Number)
-    s = sigmoid(x)
-    s * (1 - s)
-end
 
 end
