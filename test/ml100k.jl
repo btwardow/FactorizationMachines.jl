@@ -10,10 +10,12 @@ info("Train dim: $(size(ml100kTrain))")
 info("Test dim: $(size(ml100kTest))")
 
 info("Test ML-100K - Training model...")
-fmMl100k = @time fmTrain(ml100kTrain, ml100kTrainRatings, :sgd, 10, (1,1,4), (.0,.0,.0), 0.1 )
+fmMl100k = @time train(ml100kTrain, ml100kTrainRatings, 
+        method = Methods.sgd(num_epochs = UInt(10), alpha = 0.1),
+        model_params = Models.gauss(num_factors = 4))
 #info("FM Model: $fmMl100k")
 info("Test ML-100K - Prediction over test dataset...")
-p = @time fmPredict(fmMl100k, ml100kTest)
+p = @time predict(fmMl100k, ml100kTest)
 
 @test length(p) == length(ml100kTestRatings)
 
