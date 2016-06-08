@@ -1,7 +1,7 @@
 module FactorizationMachines
 
 export  train, predict, predict!,
-        fmReadLibSVM,
+        read_libsvm,
         evaluate!, evaluate,
 
         Common,
@@ -27,7 +27,7 @@ include("methods.jl")
 include("train.jl")
 
 # support func.
-include("fm_readlibsvm.jl")
+include("readlibsvm.jl")
 
 using .Predictors: predict, predict!
 using .Evaluators: evaluate, evaluate!

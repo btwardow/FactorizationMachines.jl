@@ -6,7 +6,7 @@ using Base.Test
 info("Testing reading from libsvm format...")
 
 # read data in columnar sparse matrix
-XFromFile, yFromFile = fmReadLibSVM("data/small_train.libfm")
+XFromFile, yFromFile = read_libsvm("data/small_train.libfm")
 
 @test typeof(XFromFile) == SparseMatrixCSC{Float64,Int64}
 I, J, V = findnz(XFromFile)

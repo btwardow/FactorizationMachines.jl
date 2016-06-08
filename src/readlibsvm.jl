@@ -1,4 +1,4 @@
-function fmReadLibSVM(fname::ASCIIString, dimension = :col)
+function read_libsvm(fname::ASCIIString, dimension = :col)
     label = Float64[]
     mI = Int64[]
     mJ = Int64[]

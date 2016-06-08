@@ -30,7 +30,7 @@ T = [
 
 info("Testing reading from libsvm format...")
 
-(XFromFile, yFromFile) = fmReadLibSVM("data/small_train.libfm")
+(XFromFile, yFromFile) = read_libsvm("data/small_train.libfm")
 
 println(XFromFile)
 println(size(XFromFile))
@@ -41,7 +41,7 @@ y = T[:,1]
 
 fm = train(sparse(XFromFile),yFromFile)
 
-(TFromFile, tFromFile) = fmReadLibSVM("data/small_test.libfm")
+(TFromFile, tFromFile) = read_libsvm("data/small_test.libfm")
 p = predict(fm,sparse(TFromFile))
 
 info("Predictions: $p")

@@ -4,9 +4,9 @@ using FactorizationMachines
 using Base.Test
 
 info("Running tests on ml-100k dataset...")
-(ml100kTrain, ml100kTrainRatings) = @time fmReadLibSVM("data/ml-100k.train.libfm")
+(ml100kTrain, ml100kTrainRatings) = @time read_libsvm("data/ml-100k.train.libfm")
 info("Train dim: $(size(ml100kTrain))")
-(ml100kTest, ml100kTestRatings) = @time fmReadLibSVM("data/ml-100k.test.libfm")
+(ml100kTest, ml100kTestRatings) = @time read_libsvm("data/ml-100k.test.libfm")
 info("Test dim: $(size(ml100kTest))")
 
 info("Test ML-100K - Training model...")
