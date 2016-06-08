@@ -39,10 +39,10 @@ println(size(XFromFile))
 X = sparse(T[:,2:end])
 y = T[:,1]
 
-fm = fmTrain(sparse(XFromFile),yFromFile)
+fm = train(sparse(XFromFile),yFromFile)
 
 (TFromFile, tFromFile) = fmReadLibSVM("data/small_test.libfm")
-p = fmPredict(fm,sparse(TFromFile))
+p = predict(fm,sparse(TFromFile))
 
 info("Predictions: $p")
 
