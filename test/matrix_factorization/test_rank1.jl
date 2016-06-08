@@ -38,6 +38,6 @@ fm = train(sparse(X), y;
     task_params = Tasks.classification())
 @test fm.model.w0 == 0
 @test fm.model.w == zeros(num_factors)
-@test evaluate(Evaluators.z1(), fm, sparse(X), y) < 1.0
+@test evaluate(Evaluators.heaviside(), fm, sparse(X), y) < 1.0
 
 end

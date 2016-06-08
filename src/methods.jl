@@ -2,10 +2,10 @@ module Methods
 export MethodParams
 
 using FactorizationMachines: FMMatrix, FMFloat, FMInt
-using ..Tasks: PredictorTask, loss_deriv
-using ..Models: FMModel
-using ..Predictors: FMPredictor, predict_instance!
-using ..Evaluators: Evaluator, evaluate!
+using FactorizationMachines.Tasks: PredictorTask, loss_deriv
+using FactorizationMachines.Models: FMModel
+using FactorizationMachines.Predictors: FMPredictor, predict_instance!
+using FactorizationMachines.Evaluators: Evaluator, evaluate!
 
 abstract MethodParams
 

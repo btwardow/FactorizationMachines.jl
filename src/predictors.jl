@@ -1,8 +1,10 @@
 module Predictors
 
-using FactorizationMachines: FMMatrix, FMFloat, sigmoid
 import ..Models: FMModel, predict_instance!
-using ..Tasks: PredictorTask, ClassificationTask, RegressionTask
+
+using FactorizationMachines: FMMatrix, FMFloat
+using FactorizationMachines.Common: sigmoid
+using FactorizationMachines.Tasks: PredictorTask, ClassificationTask, RegressionTask
 
 type FMPredictor{T<:PredictorTask}
     task::T

@@ -1,9 +1,10 @@
 module Evaluators
 export Evaluator
 
-using FactorizationMachines: FMMatrix, FMFloat, sqerr, z1loss
-using ..Tasks: PredictorTask
-using ..Predictors: FMPredictor, predict!
+using FactorizationMachines: FMMatrix, FMFloat
+using FactorizationMachines.Common
+using FactorizationMachines.Predictors: FMPredictor, predict!
+using FactorizationMachines.Tasks: PredictorTask
 
 abstract Evaluator
 
@@ -23,27 +24,27 @@ end
 function evaluate!{T<:PredictorTask}(evaluator::SquaredErrorEvaluator, predictor::FMPredictor{T}, 
         X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
     @time predict!(predictor, X, predictions)
-    err = [sqerr(predictions[i], y[i]) for i in 1:length(y)]
+    err = [Common.sqerr(predictions[i], y[i]) for i in 1:length(y)]
     evaluator.stat(err .* err)
 end
 
-immutable ZeroOneEvaluator <: Evaluator
+immutable HeavisideEvaluator <: Evaluator
     stat::Function
 
-    ZeroOneEvaluator(; stat::Function = x -> mean(x)) = new(stat)
+    HeavisideEvaluator(; stat::Function = x -> mean(x)) = new(stat)
 end
-const z1 = ZeroOneEvaluator
+const heaviside = HeavisideEvaluator
 
-function evaluate{T<:PredictorTask}(evaluator::ZeroOneEvaluator, predictor::FMPredictor{T}, 
+function evaluate{T<:PredictorTask}(evaluator::HeavisideEvaluator, predictor::FMPredictor{T}, 
         X::FMMatrix, y::Array{FMFloat})
     predictions = zeros(X.n)
     evaluate!(evaluator, predictor, X, y, predictions)
 end
 
-function evaluate!{T<:PredictorTask}(evaluator::ZeroOneEvaluator, predictor::FMPredictor{T}, 
+function evaluate!{T<:PredictorTask}(evaluator::HeavisideEvaluator, predictor::FMPredictor{T}, 
         X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
     @time predict!(predictor, X, predictions)
-    err = [z1loss(predictions[i], y[i]) for i in 1:length(y)]
+    err = [Common.heaviside(predictions[i], y[i]) for i in 1:length(y)]
     evaluator.stat(err)
 end
 

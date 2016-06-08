@@ -4,6 +4,7 @@ export  train, predict, predict!,
         fmReadLibSVM,
         evaluate!, evaluate,
 
+        Common,
         Tasks,
         Models,
         Predictors,
