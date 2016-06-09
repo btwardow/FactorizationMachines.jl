@@ -15,7 +15,7 @@ y = [1., 2., 2., 4.]
 
 info("Decomposing Rank 1 Matrix")
 fm = train(sparse(X), y;
-    method = Methods.sgd(alpha = 0.3),
+    method = Methods.sgd(alpha = 0.15),
     model_params = Models.gauss(k0 = false, k1 = false))
 @test fm.model.w0 == 0
 @test fm.model.w == zeros(num_factors)
@@ -33,7 +33,7 @@ y = [0., 1., 0., 1.]
 
 info("Decomposing Rank 1 Matrix")
 fm = train(sparse(X), y;
-    method = Methods.sgd(alpha = 0.3),
+    method = Methods.sgd(alpha = 0.15),
     model_params = Models.gauss(k0 = false, k1 = false), 
     task_params = Tasks.classification())
 @test fm.model.w0 == 0
