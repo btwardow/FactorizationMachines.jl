@@ -38,26 +38,26 @@ T = [
 X = sparse(T[:,2:end])'
 y = T[:,1]
 
-fm = fmTrain(X, y)
+fm = train(X, y)
 
-newX = sparse([
+X_new = sparse([
 0 1     0 1 0 0    0 0 1        13.0;
 ])'
 
-p = fmPredict(fm, newX)
+p = predict(fm, X_new)
 ```
+
 ### Using LIBSVM file format
 
 ```julia
-(XFromFile, yFromFile) = fmReadLibSVM("data/small_train.libfm")
-fm = fmTrain(sparse(XFromFile),yFromFile)
-(TFromFile, tFromFile) = fmReadLibSVM("data/small_test.libfm")
-p = fmPredict(fm,sparse(TFromFile))
+(X_train, y_train) = read_libsvm("data/small_train.libfm")
+fm = train(sparse(X_train), y_train)
+(X_test, y_test) = read_libsvm("data/small_test.libfm")
+p = predict(fm, sparse(X_test))
 ```
 
 
 ## TODOs:
--   Add classifiation. Right now only regression task is handled
 -   Adaptive SGD
 -   Performance benchmark with libfm and python implementation (pyfm)
 -   MCMC and ALS - just like in libfm
