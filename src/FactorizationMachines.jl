@@ -1,44 +1,35 @@
 module FactorizationMachines
 
-export  fmTrain, fmPredict, fmPredict!,
-        fmReadLibSVM,
-        fmEvaluateRMSE!, fmEvaluateRMSE
+export  train, predict, predict!,
+        read_libsvm,
+        evaluate!, evaluate,
+
+        Common,
+        Tasks,
+        Models,
+        Predictors,
+        Evaluators,
+        Methods
 
 typealias FMFloat Float64
 typealias FMInt Int64
 typealias FMMatrix SparseMatrixCSC{Float64,Int64}
 typealias FMVector SparseMatrixCSC{Float64,Int64}
 
-type FMModel 
-    k0::Bool
-    k1::Bool
+include("common.jl")
 
-    # model parameters
-    w0::FMFloat
-    w::Array{Float64,1}
-    V::Array{Float64,2}
+include("tasks.jl")
+include("models.jl")
+include("predictors.jl")
+include("evaluators.jl")
+include("methods.jl")
 
-    # regularization
-    reg0::FMFloat
-    regw::FMFloat
-    regv::Array{FMFloat}
-
-    initMean::FMFloat
-    initStdev::FMFloat
-
-    num_attribute::FMInt
-    num_factor::FMInt
-
-    targetMin::FMFloat
-    targetMax::FMFloat
-end
-
-include("fm.jl")
-
-# learners section
-include("fm_sgd.jl")
+include("train.jl")
 
 # support func.
-include("fm_readlibsvm.jl")
+include("readlibsvm.jl")
+
+using .Predictors: predict, predict!
+using .Evaluators: evaluate, evaluate!
 
 end # module

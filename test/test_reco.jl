@@ -19,8 +19,8 @@ using Base.Test
 #rating     #user   #items     #category    #price
 
 T = [
-5           1 0     1 0 0 0    1 0 0        12.5; 
-5           1 0     0 1 0 0    1 0 0        20; 
+5           1 0     1 0 0 0    1 0 0        12.5;
+5           1 0     0 1 0 0    1 0 0        20;
 4           1 0     0 0 1 0    1 0 0        78;
 1           0 1     1 0 0 0    0 0 1        12.5;
 1           0 1     0 1 0 0    0 0 1        20;
@@ -30,7 +30,7 @@ T = [
 
 info("Testing reading from libsvm format...")
 
-(XFromFile, yFromFile) = fmReadLibSVM("data/small_train.libfm")
+(XFromFile, yFromFile) = read_libsvm("data/small_train.libfm")
 
 println(XFromFile)
 println(size(XFromFile))
@@ -39,10 +39,10 @@ println(size(XFromFile))
 X = sparse(T[:,2:end])
 y = T[:,1]
 
-fm = fmTrain(sparse(XFromFile),yFromFile)
+fm = train(sparse(XFromFile),yFromFile)
 
-(TFromFile, tFromFile) = fmReadLibSVM("data/small_test.libfm")
-p = fmPredict(fm,sparse(TFromFile))
+(TFromFile, tFromFile) = read_libsvm("data/small_test.libfm")
+p = predict(fm,sparse(TFromFile))
 
 info("Predictions: $p")
 
