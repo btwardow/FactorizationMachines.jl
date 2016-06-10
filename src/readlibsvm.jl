@@ -7,13 +7,13 @@ function read_libsvm(fname::ASCIIString, dimension = :col)
     cnt = 1
     for line in eachline(fi)
         line = split(strip(line), " ")
-        push!(label, float(line[1]))
+        push!(label, parse(Float64, line[1]))
         line = line[2:end]
         for itm in line
             itm = split(itm, ":")
-            push!(mI, int(itm[1]) + 1)
+            push!(mI, parse(Int, itm[1]) + 1)
             push!(mJ, cnt)
-            push!(mV, float(itm[2]))
+            push!(mV, parse(Float64, itm[2]))
         end
         cnt += 1
     end
