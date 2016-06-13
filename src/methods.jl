@@ -11,19 +11,19 @@ abstract MethodParams
 
 immutable SGDMethod <: MethodParams
   alpha::FMFloat
-  num_epochs::UInt
+  num_epochs::Int
 
   # regularization
   reg0::FMFloat
   regw::FMFloat
   regv::FMFloat
 
-  SGDMethod(; alpha::FMFloat = 0.01, num_epochs::UInt = UInt(100),
+  SGDMethod(; alpha::FMFloat = 0.01, num_epochs::Int = 100,
               reg0::FMFloat = .0, regw::FMFloat = .0, regv::FMFloat = .0) = new(alpha, num_epochs, reg0, regw, regv)
 end
 const sgd = SGDMethod
 
-function sgd_train!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, X::FMMatrix, y::Array{FMFloat})
+function sgd_train!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, X::FMMatrix, y::Vector{FMFloat})
    info("Learning Factorization Machines with gradient descent...")
    for epoch in 1:sgd.num_epochs
         #info("[SGD - Epoch $epoch] Start...")
@@ -32,12 +32,12 @@ function sgd_train!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, pred
    end
 end
 
-function sgd_epoch!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, X::FMMatrix, y::Array{FMFloat}, epoch::Integer, alpha::FMFloat)
+function sgd_epoch!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, X::FMMatrix, y::Vector{FMFloat}, epoch::Integer, alpha::FMFloat)
     predictions = zeros(length(y))
-    p = .0
-    f_sum = fill(.0, predictor.model.num_factors)
-    sum_sqr = fill(.0, predictor.model.num_factors)
-    mult = .0
+    p = zero(FMFloat)
+    f_sum = zeros(predictor.model.num_factors)
+    sum_sqr = zeros(predictor.model.num_factors)
+    mult = zero(FMFloat)
 
     for c in 1:X.n
         X_nzrange = nzrange(X, c)
@@ -55,7 +55,7 @@ function sgd_epoch!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, pred
     info("[SGD - Epoch $epoch] Evaluation: $evaluation")
 end
 
-function sgd_update!(sgd::SGDMethod, model::FMModel, alpha::FMFloat, idx::Array{Int64}, x::Array{FMFloat}, mult::FMFloat, f_sum::Array{FMFloat})
+function sgd_update!(sgd::SGDMethod, model::FMModel, alpha::FMFloat, idx::Vector{Int64}, x::Vector{FMFloat}, mult::FMFloat, f_sum::Vector{FMFloat})
     if model.k0
         model.w0 -= alpha * (mult + sgd.reg0 * model.w0)
     end

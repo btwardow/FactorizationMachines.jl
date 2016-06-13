@@ -12,12 +12,12 @@ sqerr_deriv(p::Number, y::Number) = 2(p - y)
 
 """Negative logistic sigmoid"""
 nlogsig(p::Number, y::Number)       = -log(sigmoid(-p * y))
-nlogsig_deriv(p::Number, y::Number) = y * (sigmoid(-p * y) - 1)
+nlogsig_deriv(p::Number, y::Number) = y * (sigmoid(-p * y) - one(p))
 
 """Heaviside step function"""
-heaviside(p::Number, y::Number) = p == y ? 0 : 1
+heaviside(p::Number, y::Number) = p == y ? zero(p) : one(p)
 
 """Sigmoid"""
-sigmoid(x::Number) = 1 / (1 + exp(-x))
+sigmoid(x::Number) = one(x) / (one(x) + exp(-x))
 
 end
