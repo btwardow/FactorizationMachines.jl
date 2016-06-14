@@ -13,16 +13,16 @@ end
 
 """Instance prediction specialized for classification"""
 function predict_instance!(predictor::FMPredictor{ClassificationTask},
-                           idx::Array{Int64,1}, x::Array{FMFloat,1}, 
-                           f_sum::Array{FMFloat}, sum_sqr::Array{FMFloat})
+                           idx::Vector{Int64}, x::Vector{FMFloat}, 
+                           f_sum::Vector{FMFloat}, sum_sqr::Vector{FMFloat})
     p = predict_instance!(predictor.model, idx, x, f_sum, sum_sqr)
     sigmoid(p)
 end
 
 """Instance prediction specialized for regression"""
 function predict_instance!(predictor::FMPredictor{RegressionTask},
-                           idx::Array{Int64,1}, x::Array{FMFloat,1}, 
-                           f_sum::Array{FMFloat}, sum_sqr::Array{FMFloat})
+                           idx::Vector{Int64}, x::Vector{FMFloat}, 
+                           f_sum::Vector{FMFloat}, sum_sqr::Vector{FMFloat})
     p = predict_instance!(predictor.model, idx, x, f_sum, sum_sqr)
     max(min(p, predictor.task.target_max), predictor.task.target_min)
 end
@@ -35,13 +35,14 @@ function predict(predictor::FMPredictor, X::FMMatrix)
 end
 
 """Predicts labels for each column of `X` and stores the results into `result`"""
-function predict!(predictor::FMPredictor, X::FMMatrix, result::Array{FMFloat})
+function predict!(predictor::FMPredictor, X::FMMatrix, result::Vector{FMFloat})
     fill!(result, .0)
     f_sum = fill(.0, predictor.model.num_factors)
     sum_sqr = fill(.0, predictor.model.num_factors)
     for c in 1:X.n
-        idx = X.rowval[X.colptr[c] : (X.colptr[c+1]-1)]
-        x = X.nzval[X.colptr[c] : (X.colptr[c+1]-1)]
+        X_nzrange = nzrange(X, c)
+        idx = X.rowval[X_nzrange]
+        x = X.nzval[X_nzrange]
         result[c] = predict_instance!(predictor, idx, x, f_sum, sum_sqr)
     end
 end

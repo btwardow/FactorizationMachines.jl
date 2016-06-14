@@ -16,13 +16,13 @@ end
 const rmse = SquaredErrorEvaluator
 
 function evaluate{T<:PredictorTask}(evaluator::SquaredErrorEvaluator, predictor::FMPredictor{T}, 
-        X::FMMatrix, y::Array{FMFloat})
+        X::FMMatrix, y::Vector{FMFloat})
     predictions = zeros(X.n)
     evaluate!(evaluator, predictor, X, y, predictions)
 end
 
 function evaluate!{T<:PredictorTask}(evaluator::SquaredErrorEvaluator, predictor::FMPredictor{T}, 
-        X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
+        X::FMMatrix, y::Vector{FMFloat}, predictions::Vector{FMFloat})
     @time predict!(predictor, X, predictions)
     err = [Common.sqerr(predictions[i], y[i]) for i in 1:length(y)]
     evaluator.stat(err .* err)
@@ -36,13 +36,13 @@ end
 const heaviside = HeavisideEvaluator
 
 function evaluate{T<:PredictorTask}(evaluator::HeavisideEvaluator, predictor::FMPredictor{T}, 
-        X::FMMatrix, y::Array{FMFloat})
+        X::FMMatrix, y::Vector{FMFloat})
     predictions = zeros(X.n)
     evaluate!(evaluator, predictor, X, y, predictions)
 end
 
 function evaluate!{T<:PredictorTask}(evaluator::HeavisideEvaluator, predictor::FMPredictor{T}, 
-        X::FMMatrix, y::Array{FMFloat}, predictions::Array{FMFloat})
+        X::FMMatrix, y::Vector{FMFloat}, predictions::Vector{FMFloat})
     @time predict!(predictor, X, predictions)
     err = [Common.heaviside(predictions[i], y[i]) for i in 1:length(y)]
     evaluator.stat(err)

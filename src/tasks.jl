@@ -19,7 +19,7 @@ end
 """
 Given data `X` and `y`, initializes a `ClassificationTask`
 """
-function init(::ClassificationTaskParams, X::FMMatrix, y::Array{FMFloat, 1})
+function init(::ClassificationTaskParams, X::FMMatrix, y::Vector{FMFloat})
   ClassificationTask()
 end
 
@@ -43,7 +43,7 @@ end
 """
 Given data `X` and `y`, initializes a `RegressionTask`
 """
-function init(::RegressionTaskParams, X::FMMatrix, y::Array{FMFloat, 1})
+function init(::RegressionTaskParams, X::FMMatrix, y::Vector{FMFloat})
   RegressionTask(target_min = minimum(y), target_max = maximum(y))
 end
 

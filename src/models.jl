@@ -8,7 +8,7 @@ abstract ModelParams
 immutable GaussianModelParams <: ModelParams
     k0::Bool
     k1::Bool
-    num_factors::UInt
+    num_factors::Int
 
     mean::Float64
     stddev::Float64
@@ -17,7 +17,7 @@ immutable GaussianModelParams <: ModelParams
 end
 const gauss = GaussianModelParams
 
-function init(params::GaussianModelParams, X::FMMatrix, y::Array{FMFloat})
+function init(params::GaussianModelParams, X::FMMatrix, y::Vector{FMFloat})
     # initialization
     num_attributes, num_samples = size(X)
     # sanity check
@@ -37,18 +37,18 @@ type FMModel
     k1::Bool
 
     w0::FMFloat
-    w::Array{FMFloat, 1}
-    V::Array{FMFloat, 2}
+    w::Vector{FMFloat}
+    V::Matrix{FMFloat}
 
-    num_factors::UInt
+    num_factors::Int
 end
 
 function predict_instance!(model::FMModel, 
-                           idx::Array{Int64,1}, x::Array{FMFloat,1}, 
-                           f_sum::Array{FMFloat}, sum_sqr::Array{FMFloat})
+                           idx::Vector{Int64}, x::Vector{FMFloat}, 
+                           f_sum::Vector{FMFloat}, sum_sqr::Vector{FMFloat})
     fill!(f_sum, .0)
     fill!(sum_sqr, .0)
-    result = .0
+    result = zero(FMFloat)
     if model.k0
         result += model.w0
     end
