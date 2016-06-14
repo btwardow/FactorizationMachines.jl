@@ -16,7 +16,7 @@ function main()
 
     info("Training model...")
     fm = @time train(X_train, y_train, 
-        method = Methods.sgd(num_epochs = Int(10), alpha = 0.1),
+        method = Methods.sgd(num_epochs = 10, alpha = 0.1),
         model_params = Models.gauss(num_factors = 4))
 
     info("Prediction over test dataset...")

@@ -9,6 +9,8 @@ TEST_FILENAME="data/ml-10m.test.libfm"
 
 if [ ! -f "$TRAIN_FILENAME" ] || [ ! -f "$TEST_FILENAME" ]
 then 
+    rm -rf data
+
     echo "Downloading MovieLens 1OM dataset (6M)..."
     curl -s -o ml-10m.zip http://files.grouplens.org/datasets/movielens/ml-10m.zip
     unzip ml-10m.zip
