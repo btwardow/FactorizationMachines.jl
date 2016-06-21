@@ -44,7 +44,7 @@ type FMModel
 end
 
 function predict_instance!(model::FMModel, 
-                           idx::Vector{Int64}, x::Vector{FMFloat}, 
+                           idx::StridedVector{Int64}, x::StridedVector{FMFloat}, 
                            f_sum::Vector{FMFloat}, sum_sqr::Vector{FMFloat})
     fill!(f_sum, .0)
     fill!(sum_sqr, .0)

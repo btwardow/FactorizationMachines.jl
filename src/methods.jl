@@ -23,26 +23,36 @@ immutable SGDMethod <: MethodParams
 end
 const sgd = SGDMethod
 
-function sgd_train!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, X::FMMatrix, y::Vector{FMFloat})
-   info("Learning Factorization Machines with gradient descent...")
-   for epoch in 1:sgd.num_epochs
-        #info("[SGD - Epoch $epoch] Start...")
-        @time sgd_epoch!(sgd, evaluator, predictor, X, y, epoch, sgd.alpha)
-        #info("[SGD - Epoch $epoch] End.")
-   end
-end
+function sgd_train!{T<:PredictorTask}(
+    sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, 
+    X::FMMatrix, y::StridedVector{FMFloat})
 
-function sgd_epoch!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, X::FMMatrix, y::Vector{FMFloat}, epoch::Integer, alpha::FMFloat)
     predictions = zeros(length(y))
-    p = zero(FMFloat)
     f_sum = zeros(predictor.model.num_factors)
     sum_sqr = zeros(predictor.model.num_factors)
+
+    info("Learning Factorization Machines with gradient descent...")
+    for epoch in 1:sgd.num_epochs
+        #info("[SGD - Epoch $epoch] Start...")
+        @time sgd_epoch!(sgd, evaluator, predictor, 
+                         X, y, epoch, sgd.alpha, 
+                         predictions, f_sum, sum_sqr)
+        #info("[SGD - Epoch $epoch] End.")
+    end
+end
+
+function sgd_epoch!{T<:PredictorTask}(
+        sgd::SGDMethod, evaluator::Evaluator, predictor::FMPredictor{T}, 
+        X::FMMatrix, y::StridedVector{FMFloat}, epoch::Integer, alpha::FMFloat,
+        predictions::Vector{FMFloat}, f_sum::Vector{FMFloat}, sum_sqr::Vector{FMFloat})
+
+    p = zero(FMFloat)
     mult = zero(FMFloat)
 
     for c in 1:X.n
         X_nzrange = nzrange(X, c)
-        idx = X.rowval[X_nzrange]
-        x = X.nzval[X_nzrange]
+        idx = sub(X.rowval, X_nzrange)
+        x = sub(X.nzval, X_nzrange)
         #info("DEBUG: processing $c")
         p = predict_instance!(predictor, idx, x, f_sum, sum_sqr)
         #info("DEBUG: prediction - p: $p, f_sum: $f_sum, sum_sqr: $sum_sqr")
@@ -55,13 +65,17 @@ function sgd_epoch!{T<:PredictorTask}(sgd::SGDMethod, evaluator::Evaluator, pred
     info("[SGD - Epoch $epoch] Evaluation: $evaluation")
 end
 
-function sgd_update!(sgd::SGDMethod, model::FMModel, alpha::FMFloat, idx::Vector{Int64}, x::Vector{FMFloat}, mult::FMFloat, f_sum::Vector{FMFloat})
+function sgd_update!(
+        sgd::SGDMethod, model::FMModel, alpha::FMFloat, 
+        idx::StridedVector{Int64}, x::StridedVector{FMFloat}, 
+        mult::FMFloat, f_sum::Vector{FMFloat})
+
     if model.k0
         model.w0 -= alpha * (mult + sgd.reg0 * model.w0)
     end
     if model.k1
        for i in 1:length(idx)
-            model.w[idx[i]]-= alpha * (mult * x[i] + sgd.regw * model.w[idx[i]])
+            model.w[idx[i]] -= alpha * (mult * x[i] + sgd.regw * model.w[idx[i]])
         end
     end
     for f in 1:model.num_factors
