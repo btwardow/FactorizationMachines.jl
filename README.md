@@ -58,8 +58,8 @@ p = predict(fm, sparse(X_test))
 
 
 ## TODOs:
--   AdaGrad SGD optimization
--   Performance benchmark with libfm and python implementation (pyfm/fastFM/lightfm)
--   [Field-Aware FM](http://www.csie.ntu.edu.tw/~r01922136/libffm)
--   [Gaussian Process FM](http://www.ci.tuwien.ac.at/~alexis/Publications_files/gpfm-sigir14-draft.pdf)
--   MCMC and ALS - just like in libfm
+- [ ] AdaGrad SGD optimization
+- [ ] Performance benchmark with libfm and python implementation (pyfm/fastFM/lightfm)
+- [ ] [Field-Aware FM](http://www.csie.ntu.edu.tw/~r01922136/libffm)
+- [ ] [Gaussian Process FM](http://www.ci.tuwien.ac.at/~alexis/Publications_files/gpfm-sigir14-draft.pdf)
+- [ ] MCMC and ALS - just like in libfm
